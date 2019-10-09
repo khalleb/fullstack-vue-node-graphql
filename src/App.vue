@@ -1,10 +1,10 @@
 <template>
 	<div>
-    	<div id="slogan" class="text-center">
-      		<h1>GatorName</h1>
-      		<br>
-      		<h6 class="text-secondary">Gerador de nomes utilizando Vue.js, Node e GraphQL</h6>
-    	</div>
+		<div id="slogan" class="text-center">
+			<h1>GatorName</h1>
+			<br/>
+			<h6 class="text-secondary">Gerador de nomes utilizando Vue.js, Node e GraphQL</h6>
+		</div>
 		<div id="main">
 			<div class="container">
 				<div class="row">
@@ -16,7 +16,7 @@
 									<li class="list-group-item" v-for="prefixo in prefixos" v-bind:key="prefixo">
 										<div class="row">
 											<div class="col-md">
-												{{ prefixo }}	
+												{{ prefixo }}
 											</div>
 											<div class="col-md text-right">
 												<button class="btn btn-danger" v-on:click="deletePrefixo(prefix)"><span class="fa fa-trash"></span></button>
@@ -67,7 +67,16 @@
 					<div class="card-body">
 						<ul class="list-group">
 							<li class="list-group-item" v-for="dominio in dominios" v-bind:key="dominio">
-								{{ dominio }}
+								<div class="row">
+									<div class="col-md">
+										{{ dominio.name }}	
+									</div>
+									<div class="col-md text-right">
+										<a class="btn btn-success" v-bind:href="dominio.checkout" target="_blank">
+											<span class="fa fa-shopping-cart"></span>
+										</a>
+									</div>
+								</div>
 							</li>
 						</ul>
 					</div>
@@ -89,35 +98,39 @@ export default {
 			sufix:"",
 			prefixos:["Maria","João","Ronaldo"],
 			sufixos:["Silva","Ribeiro","Barros"],
-			dominios:["MariaSilva","MariaRibeiro","MariaBarros","JoãoSilva","JoãoRibeiro","JoãoBarros","RonaldoSilva","RonaldoRibeiro","RonaldoBarros"]
 		};
 	},
 	methods:{
 		addPrefixo(prefix){
 			this.prefixos.push(prefix);
 			this.prefix = "";
-			this.generate();
 		},
 		deletePrefixo(prefix){
 			this.prefixos.splice(this.prefixos.indexOf(prefix), 1);
-			this.generate();
 		},
 		addSufixo(sufix){
 			this.sufixos.push(sufix);
 			this.sufix = "";
-			this.generate();
 		},
 		deleteSufixo(sufix){
 			this.sufixos.splice(this.sufixos.indexOf(sufix), 1);
-			this.generate();
-		},
-		generate(){
-			this.dominios = [];
+		}
+	},
+	computed: {	
+		dominios(){
+			const dominios = [];
 			for(const prefix of this.prefixos){
 				for(const sufix of this.sufixos){
-					this.dominios.push(prefix + sufix);
+					const name = prefix + sufix;
+					const url  = name.toLowerCase();
+					const checkout = `https://checkout.hostgator.com.br/?a=add&sld=${url}&tld=.com`;
+					dominios.push({
+						name,
+						checkout
+					});
 				}
 			}
+			return dominios;
 		}
 	}
 };
